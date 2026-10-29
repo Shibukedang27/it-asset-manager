@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Assets{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>{% if is_staff_user %}Assets{% else %}My assets{% endif %}</h2>
+  {% if is_staff_user %}<a class="btn btn-primary" href="{% url 'asset-create' %}">Add asset</a>{% endif %}
+</div>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-4"><input class="form-control" name="q" value="{{ q }}" placeholder="Search name, serial or model"></div>
+  <div class="col-md-3">
+    <select class="form-select" name="status">
+      <option value="">All statuses</option>
+      {% for code, label in status_choices %}
+        <option value="{{ code }}" {% if code == selected_status %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <select class="form-select" name="category">
+      <option value="">All categories</option>
+      {% for c in categories %}
+        <option value="{{ c.pk }}" {% if c.pk|stringformat:"s" == selected_category %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2"><button class="btn btn-secondary w-100">Filter</button></div>
+</form>
+
+<table class="table table-striped bg-white">
+  <thead><tr><th>Name</th><th>Serial</th><th>Category</th><th>Status</th><th>Warranty till</th></tr></thead>
+  <tbody>
+  {% for asset in assets %}
+    <tr>
+      <td><a href="{% url 'asset-detail' asset.pk %}">{{ asset.name }}</a></td>
+      <td>{{ asset.serial_number }}</td>
+      <td>{{ asset.category }}</td>
+      <td>{{ asset.get_status_display }}</td>
+      <td>{{ asset.warranty_expiry|default:"-" }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="5" class="text-muted">No assets found.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% include "assets/_pagination.html" %}
+{% endblock %}

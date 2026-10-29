@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+
+{% if is_staff_user %}
+  <div class="row mb-4">
+    {% for label, total in status_counts %}
+      <div class="col-6 col-md-3 mb-3">
+        <div class="card text-center"><div class="card-body">
+          <div class="fs-2">{{ total }}</div><div class="text-muted">{{ label }}</div>
+        </div></div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-header bg-danger text-white">Low stock consumables</div>
+        <ul class="list-group list-group-flush">
+          {% for item in low_stock %}
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{{ item.name }} <small class="text-muted">{{ item.sku }}</small></span>
+              <span>{{ item.quantity }} left (reorder at {{ item.reorder_level }})
+                <a href="{% url 'movement-create' %}?consumable={{ item.pk }}">restock</a></span>
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted">Nothing is low right now.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-header bg-warning">Warranty ending in 60 days</div>
+        <ul class="list-group list-group-flush">
+          {% for asset in warranty_soon %}
+            <li class="list-group-item d-flex justify-content-between">
+              <a href="{% url 'asset-detail' asset.pk %}">{{ asset }}</a>
+              <span>{{ asset.warranty_expiry }}</span>
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted">No warranties ending soon.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-12 mb-4">
+      <div class="card">
+        <div class="card-header">Open tickets</div>
+        <ul class="list-group list-group-flush">
+          {% for ticket in open_tickets %}
+            <li class="list-group-item d-flex justify-content-between">
+              <a href="{% url 'ticket-detail' ticket.pk %}">{{ ticket }}</a>
+              <span>{{ ticket.asset.serial_number }} - {{ ticket.get_priority_display }} - {{ ticket.get_status_display }}</span>
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted">No open tickets.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-header">Assets I have</div>
+        <ul class="list-group list-group-flush">
+          {% for asset in my_assets %}
+            <li class="list-group-item"><a href="{% url 'asset-detail' asset.pk %}">{{ asset }}</a></li>
+          {% empty %}
+            <li class="list-group-item text-muted">No assets assigned to you.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <span>My tickets</span><a href="{% url 'ticket-create' %}">Raise a ticket</a>
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for ticket in my_tickets %}
+            <li class="list-group-item d-flex justify-content-between">
+              <a href="{% url 'ticket-detail' ticket.pk %}">{{ ticket }}</a>
+              <span>{{ ticket.get_status_display }}</span>
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted">You have not raised any tickets.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Assignments{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Assignments</h2>
+  <div>
+    {% if request.GET.active %}<a class="btn btn-outline-secondary" href="?">Show all</a>
+    {% else %}<a class="btn btn-outline-secondary" href="?active=1">Only active</a>{% endif %}
+    {% if is_staff_user %}<a class="btn btn-primary" href="{% url 'assignment-create' %}">Assign asset</a>{% endif %}
+  </div>
+</div>
+<table class="table table-striped bg-white">
+  <thead><tr><th>Asset</th><th>Employee</th><th>Issued</th><th>Returned</th><th></th></tr></thead>
+  <tbody>
+  {% for a in assignments %}
+    <tr>
+      <td><a href="{% url 'asset-detail' a.asset.pk %}">{{ a.asset }}</a></td>
+      <td>{{ a.employee }}</td>
+      <td>{{ a.issued_date }}</td>
+      <td>{{ a.returned_date|default:"-" }}</td>
+      <td>
+        {% if is_staff_user and a.is_active %}
+          <form method="post" action="{% url 'assignment-return' a.pk %}">
+            {% csrf_token %}<button class="btn btn-sm btn-outline-success">Mark returned</button>
+          </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="5" class="text-muted">No assignments.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% include "assets/_pagination.html" %}
+{% endblock %}

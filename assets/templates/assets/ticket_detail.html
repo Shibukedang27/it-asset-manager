@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Ticket #{{ ticket.pk }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>{{ ticket }}</h2>
+  {% if is_staff_user %}<a class="btn btn-outline-primary" href="{% url 'ticket-update' ticket.pk %}">Update</a>{% endif %}
+</div>
+<div class="card"><div class="card-body">
+  <dl class="row mb-0">
+    <dt class="col-sm-3">Asset</dt><dd class="col-sm-9"><a href="{% url 'asset-detail' ticket.asset.pk %}">{{ ticket.asset }}</a></dd>
+    <dt class="col-sm-3">Raised by</dt><dd class="col-sm-9">{{ ticket.raised_by.username }} on {{ ticket.created_at }}</dd>
+    <dt class="col-sm-3">Priority</dt><dd class="col-sm-9">{{ ticket.get_priority_display }}</dd>
+    <dt class="col-sm-3">Status</dt><dd class="col-sm-9">{{ ticket.get_status_display }}</dd>
+    <dt class="col-sm-3">Description</dt><dd class="col-sm-9">{{ ticket.description|linebreaksbr|default:"-" }}</dd>
+    <dt class="col-sm-3">IT notes</dt><dd class="col-sm-9">{{ ticket.notes|linebreaksbr|default:"-" }}</dd>
+  </dl>
+</div></div>
+{% endblock %}
