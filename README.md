@@ -7,6 +7,9 @@ raise repair tickets, and keep an eye on small stock like cables and toner.
 I made it with a small IT/hardware company in mind (stock room, staff laptops, repair requests).
 All the data in the seed command is made up.
 
+![dashboard](docs/dashboard.png)
+![asset list](docs/assets.png)
+
 ## What it does
 
 - Login, logout and signup. Two roles using Django Groups:
@@ -181,4 +184,4 @@ assets/templates/  app pages (bootstrap from a CDN)
 - Ticket comments instead of one notes box, and email when a ticket changes.
 - An asset can only have one holder at a time, which is checked in code. A database constraint would be safer.
 - Switch to PostgreSQL for real use, SQLite is only for development.
-- Add screenshots to this README.
+- Add a screenshot of the employee view (the ones above are from an IT Staff login).
