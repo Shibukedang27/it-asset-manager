@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
+from django.urls import reverse
 
 
 class Category(models.Model):
@@ -82,6 +83,9 @@ class Asset(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.serial_number})"
+
+    def get_absolute_url(self):
+        return reverse("asset-detail", args=[self.pk])
 
     @property
     def under_warranty(self):
@@ -172,6 +176,9 @@ class ServiceTicket(models.Model):
 
     def __str__(self):
         return f"#{self.pk} {self.title}"
+
+    def get_absolute_url(self):
+        return reverse("ticket-detail", args=[self.pk])
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
